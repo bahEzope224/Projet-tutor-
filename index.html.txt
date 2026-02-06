@@ -1,0 +1,243 @@
+<html lang="fr"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IQRA - Remise à Niveau Coran</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+</head>
+<body class="bg-white">
+    <!-- Header -->
+    <header class="border-b border-neutral-200">
+        <div class="max-w-5xl mx-auto px-6 py-5">
+            <div class="flex items-center justify-between">
+                <div class="text-xl font-semibold tracking-tight text-neutral-900">IQRA</div>
+                <div class="flex items-center gap-2 text-sm text-neutral-600">
+                    <iconify-icon icon="solar:star-linear" width="20" style="stroke-width: 1.5;"></iconify-icon>
+                    <span class="font-medium">Places limitées</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="max-w-5xl mx-auto px-6 py-16 md:py-24">
+        <div class="max-w-3xl mx-auto text-center">
+            <div id="counter-badge" class="inline-flex items-center gap-2 px-3 py-1.5 bg-emerald-50 border border-emerald-200 rounded-full mb-6">
+                <div class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+                <span id="counter-text" class="text-sm font-medium text-emerald-900">Chargement...</span>
+            </div>
+            
+            <h1 class="text-4xl md:text-5xl font-semibold tracking-tight text-neutral-900 mb-6">
+                Remise à niveau Coran pour débutants
+            </h1>
+            
+            <p class="text-lg text-neutral-600 mb-4 leading-relaxed">
+                Rejoignez notre communauté d'apprentissage sur Discord et bénéficiez de cours structurés, d'échanges enrichissants et d'un accompagnement personnalisé.
+            </p>
+            
+            <p class="text-base text-emerald-700 font-medium mb-8">
+                Préparez-vous au Ramadan avec une base solide
+            </p>
+
+            <!-- Features -->
+            <div class="grid md:grid-cols-3 gap-6 mb-12">
+                <div class="flex flex-col items-center text-center p-6 bg-neutral-50 rounded-xl border border-neutral-200">
+                    <div class="w-12 h-12 bg-white border border-neutral-200 rounded-lg flex items-center justify-center mb-4">
+                        <iconify-icon icon="solar:book-2-linear" width="24" style="stroke-width: 1.5;" class="text-neutral-900"></iconify-icon>
+                    </div>
+                    <h3 class="font-semibold text-neutral-900 mb-2">Cours structurés</h3>
+                    <p class="text-sm text-neutral-600">Programme complet adapté aux débutants</p>
+                </div>
+
+                <div class="flex flex-col items-center text-center p-6 bg-neutral-50 rounded-xl border border-neutral-200">
+                    <div class="w-12 h-12 bg-white border border-neutral-200 rounded-lg flex items-center justify-center mb-4">
+                        <iconify-icon icon="solar:users-group-rounded-linear" width="24" style="stroke-width: 1.5;" class="text-neutral-900"></iconify-icon>
+                    </div>
+                    <h3 class="font-semibold text-neutral-900 mb-2">Petits groupes</h3>
+                    <p class="text-sm text-neutral-600">Limité à 10 membres pour un meilleur suivi</p>
+                </div>
+
+                <div class="flex flex-col items-center text-center p-6 bg-neutral-50 rounded-xl border border-neutral-200">
+                    <div class="w-12 h-12 bg-white border border-neutral-200 rounded-lg flex items-center justify-center mb-4">
+                        <iconify-icon icon="solar:chat-round-line-linear" width="24" style="stroke-width: 1.5;" class="text-neutral-900"></iconify-icon>
+                    </div>
+                    <h3 class="font-semibold text-neutral-900 mb-2">Sur Discord</h3>
+                    <p class="text-sm text-neutral-600">Plateforme interactive et conviviale</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Section -->
+        <div class="max-w-xl mx-auto">
+            <div class="bg-white border border-neutral-200 rounded-2xl p-8 shadow-sm">
+                <div class="text-center mb-8">
+                    <h2 class="text-2xl font-semibold tracking-tight text-neutral-900 mb-3">
+                        Inscrivez-vous maintenant
+                    </h2>
+                    <p class="text-neutral-600">
+                        Remplissez le formulaire pour recevoir le lien du serveur Discord
+                    </p>
+                </div>
+
+                <form id="registrationForm" class="space-y-5">
+                    <div>
+                        <label for="fullName" class="block text-sm font-medium text-neutral-900 mb-2">
+                            Nom complet
+                        </label>
+                        <input type="text" id="fullName" name="fullName" required="" placeholder="Votre nom complet" class="w-full px-4 py-2.5 bg-white border border-neutral-300 rounded-lg text-neutral-900 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent transition-all">
+                    </div>
+
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-neutral-900 mb-2">
+                            Adresse email
+                        </label>
+                        <input type="email" id="email" name="email" required="" placeholder="vous@exemple.com" class="w-full px-4 py-2.5 bg-white border border-neutral-300 rounded-lg text-neutral-900 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent transition-all">
+                    </div>
+
+                    <div class="pt-2">
+                        <button type="submit" class="w-full px-6 py-3 bg-neutral-900 text-white font-medium rounded-lg hover:bg-neutral-800 transition-colors duration-200 flex items-center justify-center gap-2">
+                            <span>S'inscrire pour 5€</span>
+                            <iconify-icon icon="solar:arrow-right-linear" width="20" style="stroke-width: 1.5;"></iconify-icon>
+                        </button>
+                    </div>
+
+                    <div class="flex items-start gap-3 pt-2">
+                        <iconify-icon icon="solar:info-circle-linear" width="20" style="stroke-width: 1.5;" class="text-neutral-400 flex-shrink-0 mt-0.5"></iconify-icon>
+                        <p class="text-xs text-neutral-600 leading-relaxed">
+                            Après votre inscription, vous recevrez un email avec le lien du serveur Discord et les instructions de paiement PayPal. Les frais d'inscription de 5€ servent à la gestion du site et des ressources pédagogiques.
+                        </p>
+                    </div>
+                </form>
+
+                <div id="successMessage" class="hidden mt-6 p-4 bg-emerald-50 border border-emerald-200 rounded-lg">
+                    <div class="flex items-start gap-3">
+                        <iconify-icon icon="solar:check-circle-linear" width="24" style="stroke-width: 1.5;" class="text-emerald-600 flex-shrink-0"></iconify-icon>
+                        <div>
+                            <h3 class="font-semibold text-emerald-900 mb-1">Inscription réussie !</h3>
+                            <p class="text-sm text-emerald-800">Vous recevrez bientôt un email avec tous les détails.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pricing Info -->
+            <div class="mt-8 space-y-4">
+                <div class="text-center">
+                    <div class="inline-flex items-center gap-6 text-sm text-neutral-600">
+                        <div class="flex items-center gap-2">
+                            <iconify-icon icon="solar:bill-check-linear" width="18" style="stroke-width: 1.5;"></iconify-icon>
+                            <span>5€ d'inscription</span>
+                        </div>
+                        <div class="w-px h-4 bg-neutral-300"></div>
+                        <div class="flex items-center gap-2">
+                            <iconify-icon icon="solar:wallet-linear" width="18" style="stroke-width: 1.5;"></iconify-icon>
+                            <span>Paiement via PayPal</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                    <div class="flex items-start gap-3">
+                        <iconify-icon icon="solar:heart-linear" width="20" style="stroke-width: 1.5;" class="text-amber-600 flex-shrink-0 mt-0.5"></iconify-icon>
+                        <div>
+                            <h3 class="font-semibold text-amber-900 text-sm mb-1">Frais mensuels libres</h3>
+                            <p class="text-xs text-amber-800 leading-relaxed">
+                                Les cours mensuels fonctionnent sur une base de participation libre. Chacun contribue selon ses moyens et sa satisfaction.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="border-t border-neutral-200 mt-16">
+        <div class="max-w-5xl mx-auto px-6 py-8">
+            <div class="text-center text-sm text-neutral-600">
+                <p>© 2024 IQRA. Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // COLLEZ L'URL DE VOTRE SCRIPT GOOGLE ICI
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyfR2LvfA5yj1H-Ds4QesbVU2CUEOkbe2zuAZnl_UYQDCir5e4mVP8j0jvB_lBGSYRQ/exec';
+    
+        const counterText = document.getElementById('counter-text');
+        const counterBadge = document.getElementById('counter-badge');
+        const submitBtn = document.querySelector('button[type="submit"]');
+    
+        // Fonction pour mettre à jour l'affichage des places
+        function updatePlaces(count) {
+            counterText.textContent = count + " places disponibles";
+            if (count <= 0) {
+                counterText.textContent = "Complet";
+                counterBadge.classList.remove('bg-emerald-50', 'border-emerald-200');
+                counterBadge.classList.add('bg-red-50', 'border-red-200');
+                counterText.classList.replace('text-emerald-900', 'text-red-900');
+                // Désactiver le formulaire si complet
+                submitBtn.disabled = true;
+                submitBtn.textContent = "Inscriptions fermées";
+                submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+        }
+    
+        // 1. Au chargement de la page : Récupérer le vrai nombre de places
+        window.addEventListener('load', function() {
+            fetch(SCRIPT_URL)
+                .then(response => response.json())
+                .then(data => {
+                    updatePlaces(data.placesRestantes);
+                })
+                .catch(error => console.error('Erreur chargement places:', error));
+        });
+    
+        // 2. Lors de l'inscription
+        document.getElementById('registrationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Effet de chargement sur le bouton
+            const originalBtnText = submitBtn.innerHTML;
+            submitBtn.innerHTML = "Traitement en cours...";
+            submitBtn.disabled = true;
+    
+            const fullName = document.getElementById('fullName').value;
+            const email = document.getElementById('email').value;
+            
+            // Envoi des données au script Google
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify({ fullName: fullName, email: email })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.result === "success") {
+                    // Afficher le message de succès
+                    document.getElementById('successMessage').classList.remove('hidden');
+                    
+                    // Mettre à jour le compteur visuellement (-1)
+                    updatePlaces(data.placesRestantes);
+    
+                    // Reset du formulaire
+                    this.reset();
+                    
+                    // Masquer le succès après 5s
+                    setTimeout(() => {
+                        document.getElementById('successMessage').classList.add('hidden');
+                    }, 5000);
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                alert("Une erreur est survenue. Merci de réessayer.");
+            })
+            .finally(() => {
+                // Remettre le bouton normal
+                submitBtn.innerHTML = originalBtnText;
+                submitBtn.disabled = false;
+            });
+        });
+    </script>
+
+</body></html>
