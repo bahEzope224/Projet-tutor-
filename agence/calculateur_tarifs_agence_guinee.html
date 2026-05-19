@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulateur Tarifaire — Agence Digitale · Conakry</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/dist/tabler-icons.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+:root {
+  --clay-900:#2C1503;--clay-800:#5C2E0E;--clay-700:#7B3F1A;
+  --clay-600:#9B5230;--clay-500:#C07048;--clay-400:#D4956A;
+  --clay-200:#EDD4BB;--clay-100:#F5E8D8;--clay-50:#FAF3EC;
+  --ink:#1A0F0A;--ink-2:#4A3328;--ink-3:#7C6055;--ink-4:#AA9288;
+  --paper:#FDFAF7;--mist:#F2EBE3;--card:#FFFFFF;
+  --green:#009A44;--red:#D92D20;--amber:#C67C00;--blue:#1D6FA4;
+  --green-bg:rgba(0,154,68,.08);--red-bg:rgba(217,45,32,.08);
+  --amber-bg:rgba(198,124,0,.08);--blue-bg:rgba(29,111,164,.08);
+  --border:rgba(92,46,14,.1);--border-md:rgba(92,46,14,.16);
+  --sidebar-w:228px;
+  --r-sm:8px;--r-md:12px;--r-lg:18px;--r-xl:26px;
+  --shadow-sm:0 1px 3px rgba(0,0,0,.04),0 4px 12px rgba(0,0,0,.04);
+  --shadow-md:0 4px 16px rgba(0,0,0,.06),0 1px 4px rgba(0,0,0,.04);
+  --font:'Sora',system-ui,sans-serif;
+  --mono:'DM Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{height:100%}
+body{font-family:var(--font);font-size:14px;color:var(--ink);background:var(--paper);height:100%;overflow-x:hidden}
+
+/* ── LAYOUT ── */
+.layout{display:flex;min-height:100vh}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  width:var(--sidebar-w);min-width:var(--sidebar-w);
+  background:var(--clay-800);
+  display:flex;flex-direction:column;
+  position:sticky;top:0;height:100vh;
+  z-index:100;flex-shrink:0;
+}
+.sidebar-brand{
+  padding:28px 20px 24px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.brand-eyebrow{
+  font-size:9px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--clay-400);font-weight:600;margin-bottom:6px;
+}
+.brand-name{
+  font-size:17px;font-weight:700;color:#fff;line-height:1.25;
+}
+.brand-sub{
+  font-size:11px;color:rgba(255,255,255,.45);margin-top:3px;font-weight:300;
+}
+.sidebar-nav{flex:1;padding:16px 10px}
+.nav-label{
+  font-size:9px;letter-spacing:.1em;text-transform:uppercase;
+  color:rgba(255,255,255,.3);font-weight:600;
+  padding:0 10px;margin:8px 0 6px;
+}
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 12px;border-radius:var(--r-md);
+  cursor:pointer;border:none;background:transparent;
+  color:rgba(255,255,255,.5);font-family:var(--font);font-size:13px;
+  width:100%;text-align:left;
+  transition:background .18s,color .18s;
+  margin-bottom:2px;
+}
+.nav-item i{font-size:16px;flex-shrink:0;width:20px;text-align:center}
+.nav-item:hover{background:rgba(255,255,255,.07);color:rgba(255,255,255,.85)}
+.nav-item.active{
+  background:rgba(255,255,255,.12);color:#fff;font-weight:600;
+}
+.nav-item.active i{color:var(--clay-400)}
+.sidebar-footer{
+  padding:16px;border-top:1px solid rgba(255,255,255,.08);
+}
+.footer-pill{
+  background:rgba(0,154,68,.15);border:1px solid rgba(0,154,68,.25);
+  border-radius:99px;padding:6px 12px;
+  display:flex;align-items:center;gap:8px;
+}
+.footer-dot{width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.footer-text{font-size:11px;color:rgba(255,255,255,.6)}
+.footer-text strong{color:rgba(255,255,255,.9);display:block;font-size:11px}
+
+/* ── MAIN ── */
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.topbar{
+  background:var(--card);
+  border-bottom:1px solid var(--border);
+  padding:0 32px;height:60px;
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:50;
+}
+.topbar-left{display:flex;align-items:center;gap:12px}
+.topbar-icon{
+  width:32px;height:32px;border-radius:var(--r-sm);
+  background:var(--clay-50);display:flex;align-items:center;justify-content:center;
+}
+.topbar-icon i{font-size:16px;color:var(--clay-800)}
+.topbar-title{font-size:15px;font-weight:600;color:var(--ink)}
+.topbar-right{display:flex;align-items:center;gap:8px}
+.topbar-badge{
+  font-size:11px;font-weight:600;padding:4px 10px;
+  border-radius:99px;background:var(--clay-50);color:var(--clay-700);
+  border:1px solid var(--clay-200);font-family:var(--mono);
+}
+.content{padding:28px 32px 60px;max-width:1200px}
+
+/* ── PAGE TRANSITIONS ── */
+.page{display:none;animation:fadein .22s ease}
+.page.active{display:block}
+@keyframes fadein{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* ── SECTION ── */
+.section-title{
+  font-size:13px;font-weight:600;letter-spacing:.03em;
+  color:var(--ink-3);text-transform:uppercase;
+  margin-bottom:14px;display:flex;align-items:center;gap:8px;
+}
+.section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* ── CARDS ── */
+.card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r-lg);padding:22px;
+  box-shadow:var(--shadow-sm);
+}
+.card-title{
+  font-size:13px;font-weight:600;color:var(--ink-2);
+  margin-bottom:18px;display:flex;align-items:center;gap:8px;
+}
+.card-title i{color:var(--clay-500);font-size:16px}
+
+/* ── METRICS ── */
+.metric{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r-lg);padding:18px 20px;
+  border-left:3px solid var(--clay-400);
+  box-shadow:var(--shadow-sm);
+}
+.metric.green{border-left-color:var(--green)}
+.metric.red{border-left-color:var(--red)}
+.metric.blue{border-left-color:var(--blue)}
+.metric-label{
+  font-size:11px;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--ink-4);font-weight:600;margin-bottom:6px;
+}
+.metric-value{
+  font-size:24px;font-weight:700;color:var(--ink);
+  font-family:var(--mono);letter-spacing:-1px;line-height:1;
+}
+.metric-sub{font-size:11px;color:var(--ink-4);margin-top:6px;line-height:1.5}
+
+/* ── GRIDS ── */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+
+/* ── SLIDERS ── */
+.slider-row{margin-bottom:20px}
+.slider-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.slider-top label{font-size:12px;font-weight:500;color:var(--ink-3)}
+.slider-val{
+  font-family:var(--mono);font-size:12px;font-weight:500;
+  background:var(--clay-50);color:var(--clay-800);
+  padding:3px 9px;border-radius:99px;
+  border:1px solid var(--clay-200);
+}
+.range-wrap{position:relative;padding-bottom:2px}
+input[type=range]{
+  -webkit-appearance:none;appearance:none;
+  width:100%;height:4px;border-radius:99px;
+  background:var(--mist);outline:none;cursor:pointer;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;
+  width:16px;height:16px;border-radius:50%;
+  background:var(--clay-800);cursor:pointer;
+  border:2.5px solid white;
+  box-shadow:0 2px 8px rgba(92,46,14,.3);
+  transition:transform .15s;
+}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.2)}
+input[type=range]:focus::-webkit-slider-thumb{transform:scale(1.15);box-shadow:0 0 0 4px var(--clay-100)}
+.hint{font-size:11px;color:var(--ink-4);margin-top:5px;line-height:1.5}
+
+/* ── TABLES ── */
+.tbl-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow-sm)}
+table{width:100%;border-collapse:collapse}
+thead tr{background:var(--mist)}
+thead th{
+  padding:11px 14px;font-size:10px;letter-spacing:.08em;
+  text-transform:uppercase;font-weight:700;color:var(--ink-3);
+  text-align:left;
+}
+tbody td{padding:12px 14px;border-bottom:1px solid var(--border);font-size:13px}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:var(--clay-50)}
+.td-right{text-align:right}
+.td-amt{font-family:var(--mono);font-weight:600;color:var(--green);text-align:right;font-size:12px}
+.td-min{font-family:var(--mono);font-size:11px;color:var(--ink-4);text-align:right}
+.td-muted{color:var(--ink-4);font-size:12px}
+.td-h{font-family:var(--mono);font-size:12px;color:var(--blue);text-align:right}
+
+/* ── ALERTS ── */
+.alert{border-radius:var(--r-md);padding:14px 16px;font-size:13px;line-height:1.6;margin-top:16px;display:flex;gap:10px}
+.alert i{font-size:16px;flex-shrink:0;margin-top:1px}
+.alert-info{background:var(--blue-bg);border:1px solid rgba(29,111,164,.15);color:var(--blue)}
+.alert-warn{background:var(--amber-bg);border:1px solid rgba(198,124,0,.18);color:var(--amber)}
+.alert-success{background:var(--green-bg);border:1px solid rgba(0,154,68,.18);color:var(--green)}
+
+/* ── CONTRACTS ── */
+.contract-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r-lg);padding:22px;box-shadow:var(--shadow-sm);
+  display:flex;flex-direction:column;gap:14px;
+}
+.contract-card.featured{
+  border-color:var(--clay-400);
+  box-shadow:0 0 0 1px var(--clay-200),var(--shadow-md);
+}
+.contract-header{display:flex;align-items:center;justify-content:space-between}
+.contract-title{font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px}
+.contract-title i{color:var(--clay-500)}
+.chip{font-size:10px;font-weight:700;letter-spacing:.04em;padding:3px 9px;border-radius:99px}
+.chip-clay{background:var(--clay-50);color:var(--clay-700);border:1px solid var(--clay-200)}
+.chip-featured{background:var(--clay-800);color:white}
+.contract-data{font-size:12px;line-height:2;color:var(--ink-3)}
+.contract-data strong{color:var(--ink);font-weight:600;font-family:var(--mono)}
+.contract-footer{
+  background:var(--clay-50);border-radius:var(--r-sm);padding:10px 14px;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.cf-label{font-size:11px;color:var(--ink-4);font-weight:500}
+.cf-value{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--clay-800)}
+.divider{height:1px;background:var(--border);margin:20px 0}
+
+/* ── CHART ── */
+.chart-wrap{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r-lg);padding:20px;box-shadow:var(--shadow-sm);
+  position:relative;
+}
+.chart-legend{display:flex;gap:16px;margin-bottom:14px;flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--ink-3)}
+.legend-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .sidebar{display:none}
+  .grid2,.grid3,.grid4{grid-template-columns:1fr}
+  .content{padding:20px 16px 80px}
+  .topbar{padding:0 16px}
+  .mobile-nav{
+    display:flex;position:fixed;bottom:0;left:0;right:0;
+    background:var(--clay-800);border-top:1px solid rgba(255,255,255,.1);
+    z-index:200;padding:6px 8px;gap:4px;justify-content:space-around;
+    padding-bottom:max(6px, env(safe-area-inset-bottom));
+  }
+  .mob-btn{
+    flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;
+    padding:6px 4px;border-radius:var(--r-sm);border:none;background:transparent;
+    color:rgba(255,255,255,.5);font-family:var(--font);font-size:10px;cursor:pointer;
+    transition:.15s;
+  }
+  .mob-btn i{font-size:18px}
+  .mob-btn.active{color:#fff;background:rgba(255,255,255,.1)}
+}
+@media(min-width:901px){.mobile-nav{display:none}}
+
+/* ── PROGRESS BAR ── */
+.prog-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.prog-label{font-size:12px;color:var(--ink-3);width:110px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prog-bar{flex:1;height:6px;background:var(--mist);border-radius:99px;overflow:hidden}
+.prog-fill{height:100%;border-radius:99px;background:var(--clay-500);transition:width .4s ease}
+.prog-val{font-family:var(--mono);font-size:11px;color:var(--ink-4);width:90px;text-align:right;flex-shrink:0}
+
+/* ── EMPTY STATE ── */
+.empty{text-align:center;padding:40px;color:var(--ink-4)}
+</style>
+</head>
+<body>
+<div class="layout">
+
+  <!-- ═══ SIDEBAR ═══ -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-eyebrow">Agence Digitale · Conakry</div>
+      <div class="brand-name">Simulateur<br>Tarifaire</div>
+      <div class="brand-sub">BAH &amp; DIALLO · 2025</div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-label">Modules</div>
+      <button class="nav-item active" onclick="showTab('charges',this)">
+        <i class="ti ti-calculator"></i><span>Charges mensuelles</span>
+      </button>
+      <button class="nav-item" onclick="showTab('tarifs',this)">
+        <i class="ti ti-tag"></i><span>Grille tarifaire</span>
+      </button>
+      <button class="nav-item" onclick="showTab('contrats',this)">
+        <i class="ti ti-file-invoice"></i><span>Contrats &amp; paiements</span>
+      </button>
+      <button class="nav-item" onclick="showTab('seuil',this)">
+        <i class="ti ti-chart-line"></i><span>Seuil de rentabilité</span>
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="footer-pill">
+        <div class="footer-dot"></div>
+        <div class="footer-text">
+          <strong>Phase test · 6 mois</strong>
+          Avant enregistrement RCCM
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ═══ MAIN ═══ -->
+  <main class="main">
+    <header class="topbar">
+      <div class="topbar-left">
+        <div class="topbar-icon"><i id="topbar-icon" class="ti ti-calculator"></i></div>
+        <span class="topbar-title" id="topbar-title">Charges mensuelles</span>
+      </div>
+      <div class="topbar-right">
+        <span class="topbar-badge" id="topbar-total">—</span>
+      </div>
+    </header>
+
+    <div class="content">
+
+      <!-- ─── PAGE CHARGES ─── -->
+      <div id="page-charges" class="page active">
+        <div class="grid2" style="margin-bottom:20px">
+
+          <!-- Kadiatou -->
+          <div class="card">
+            <div class="card-title"><i class="ti ti-user-circle"></i> Kadiatou Diallo</div>
+            <div class="slider-row">
+              <div class="slider-top"><label>Wifi</label><span class="slider-val" id="v-kd-wifi"></span></div>
+              <input type="range" id="kd-wifi" min="100000" max="700000" step="10000" value="490000" oninput="update()">
+              <div class="hint">Forfait complet : 490 000 · Demi-forfait : 245 000 GNF</div>
+            </div>
+            <div class="slider-row">
+              <div class="slider-top"><label>Transport</label><span class="slider-val" id="v-kd-transport"></span></div>
+              <input type="range" id="kd-transport" min="50000" max="500000" step="10000" value="150000" oninput="update()">
+            </div>
+            <div class="slider-row">
+              <div class="slider-top"><label>Nourriture (missions)</label><span class="slider-val" id="v-kd-food"></span></div>
+              <input type="range" id="kd-food" min="0" max="300000" step="10000" value="100000" oninput="update()">
+            </div>
+            <div class="slider-row">
+              <div class="slider-top"><label>Canva Pro</label><span class="slider-val" id="v-kd-canva"></span></div>
+              <input type="range" id="kd-canva" min="0" max="200000" step="5000" value="60000" oninput="update()">
+            </div>
+            <div class="slider-row">
+              <div class="slider-top"><label>Stockage Drive &amp; téléphone</label><span class="slider-val" id="v-kd-storage"></span></div>
+              <input type="range" id="kd-storage" min="0" max="100000" step="5000" value="20000" oninput="update()">
+            </div>
+            <div class="slider-row">
+              <div class="slider-top"><label>Divers / imprévus</label><span class="slider-val" id="v-kd-misc"></span></div>
+              <input type="range" id="kd-misc" min="0" max="200000" step="10000" value="50000" oninput="update()">
+            </div>
+            <div class="metric" style="margin-top:6px">
+              <div class="metric-label">Total Kadiatou</div>
+              <div class="metric-value" id="total-kd">—</div>
+            </div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <!-- Ibrahima -->
+            <div class="card">
+              <div class="card-title"><i class="ti ti-user-circle"></i> Ibrahima Bah</div>
+              <div class="slider-row">
+                <div class="slider-top"><label>Wifi + hébergement serveurs</label><span class="slider-val" id="v-ib-wifi"></span></div>
+                <input type="range" id="ib-wifi" min="0" max="700000" step="10000" value="200000" oninput="update()">
+              </div>
+              <div class="slider-row">
+                <div class="slider-top"><label>Licences &amp; outils dev</label><span class="slider-val" id="v-ib-apps"></span></div>
+                <input type="range" id="ib-apps" min="0" max="500000" step="10000" value="200000" oninput="update()">
+                <div class="hint">Valeur estimée : 200 000 GNF</div>
+              </div>
+              <div class="slider-row">
+                <div class="slider-top"><label>Transport</label><span class="slider-val" id="v-ib-transport"></span></div>
+                <input type="range" id="ib-transport" min="0" max="300000" step="10000" value="80000" oninput="update()">
+              </div>
+              <div class="slider-row">
+                <div class="slider-top"><label>Divers</label><span class="slider-val" id="v-ib-misc"></span></div>
+                <input type="range" id="ib-misc" min="0" max="200000" step="10000" value="30000" oninput="update()">
+              </div>
+              <div class="metric" style="margin-top:6px">
+                <div class="metric-label">Total Ibrahima</div>
+                <div class="metric-value" id="total-ib">—</div>
+              </div>
+            </div>
+
+            <!-- Stagiaire -->
+            <div class="card">
+              <div class="card-title"><i class="ti ti-user-plus"></i> Stagiaire</div>
+              <div class="slider-row">
+                <div class="slider-top"><label>Salaire <span style="color:var(--red);font-size:10px">obligatoire</span></label><span class="slider-val" id="v-st-salary"></span></div>
+                <input type="range" id="st-salary" min="200000" max="1500000" step="50000" value="500000" oninput="update()">
+              </div>
+              <div class="slider-row">
+                <div class="slider-top"><label>Wifi (si montage digital)</label><span class="slider-val" id="v-st-wifi"></span></div>
+                <input type="range" id="st-wifi" min="0" max="500000" step="10000" value="245000" oninput="update()">
+                <div class="hint">Facultatif · Demi-forfait conseillé : 245 000 GNF</div>
+              </div>
+              <div class="slider-row">
+                <div class="slider-top"><label>Transport week-end</label><span class="slider-val" id="v-st-transport"></span></div>
+                <input type="range" id="st-transport" min="0" max="200000" step="10000" value="80000" oninput="update()">
+              </div>
+              <div class="slider-row">
+                <div class="slider-top"><label>Nourriture week-end</label><span class="slider-val" id="v-st-food"></span></div>
+                <input type="range" id="st-food" min="0" max="150000" step="10000" value="60000" oninput="update()">
+              </div>
+              <div class="metric" style="margin-top:6px">
+                <div class="metric-label">Total stagiaire</div>
+                <div class="metric-value" id="total-st">—</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Charges fixes agence -->
+        <div class="card" style="margin-bottom:20px">
+          <div class="card-title"><i class="ti ti-building"></i> Charges fixes agence</div>
+          <div class="grid3">
+            <div class="slider-row">
+              <div class="slider-top"><label>Matériel &amp; accessoires</label><span class="slider-val" id="v-ag-materiel"></span></div>
+              <input type="range" id="ag-materiel" min="0" max="500000" step="10000" value="100000" oninput="update()">
+            </div>
+            <div class="slider-row">
+              <div class="slider-top"><label>Coworking / bureau</label><span class="slider-val" id="v-ag-bureau"></span></div>
+              <input type="range" id="ag-bureau" min="0" max="500000" step="10000" value="0" oninput="update()">
+            </div>
+            <div class="slider-row">
+              <div class="slider-top"><label>Imprévus agence</label><span class="slider-val" id="v-ag-misc"></span></div>
+              <input type="range" id="ag-misc" min="0" max="300000" step="10000" value="100000" oninput="update()">
+            </div>
+          </div>
+        </div>
+
+        <!-- KPIs -->
+        <div class="grid4" style="margin-bottom:20px">
+          <div class="metric">
+            <div class="metric-label">Charges totales</div>
+            <div class="metric-value" id="total-all">—</div>
+            <div class="metric-sub" id="total-all-usd">—</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Charges variables</div>
+            <div class="metric-value" id="total-var">—</div>
+            <div class="metric-sub">Transport &amp; nourriture</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Charges fixes</div>
+            <div class="metric-value" id="total-fix">—</div>
+            <div class="metric-sub">Wifi · salaire · outils</div>
+          </div>
+          <div class="metric green">
+            <div class="metric-label">CA minimum / mois</div>
+            <div class="metric-value" id="ca-min">—</div>
+            <div class="metric-sub">Charges + 15% tampon</div>
+          </div>
+        </div>
+
+        <!-- Chart + Breakdown -->
+        <div class="grid2">
+          <div class="chart-wrap" style="height:260px">
+            <canvas id="chargesChart" role="img" aria-label="Répartition des charges mensuelles par personne">Charges mensuelles</canvas>
+          </div>
+          <div class="card">
+            <div class="card-title"><i class="ti ti-chart-bar"></i> Répartition détaillée</div>
+            <div id="charges-breakdown"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── PAGE TARIFS ─── -->
+      <div id="page-tarifs" class="page">
+        <div class="grid2" style="margin-bottom:20px;align-items:center">
+          <div class="card">
+            <div class="card-title"><i class="ti ti-percentage"></i> Marge cible</div>
+            <div class="slider-row">
+              <div class="slider-top"><label>Marge appliquée sur les prestations</label><span class="slider-val" id="v-margin"></span></div>
+              <input type="range" id="margin" min="20" max="150" step="5" value="60" oninput="update()">
+              <div class="hint">40–60% est réaliste en phase de test. En dessous de 40%, vous couvrez à peine les charges.</div>
+            </div>
+          </div>
+          <div class="grid2">
+            <div class="metric">
+              <div class="metric-label">Coût horaire de revient</div>
+              <div class="metric-value" id="hourly-cost">—</div>
+              <div class="metric-sub">Sur 80h facturables/mois</div>
+            </div>
+            <div class="metric blue">
+              <div class="metric-label">Tarif horaire facturé</div>
+              <div class="metric-value" id="hourly-billed">—</div>
+              <div class="metric-sub">Avec marge appliquée</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-title">Packs Communication</div>
+        <div class="tbl-wrap" style="margin-bottom:20px">
+          <table>
+            <thead><tr>
+              <th>Pack</th><th>Contenu livré</th>
+              <th class="td-right">Coût de revient</th>
+              <th class="td-right">Tarif conseillé</th>
+              <th class="td-right">Tarif minimum</th>
+            </tr></thead>
+            <tbody id="table-kom"></tbody>
+          </table>
+        </div>
+
+        <div class="section-title">Développement Web</div>
+        <div class="tbl-wrap" style="margin-bottom:20px">
+          <table>
+            <thead><tr>
+              <th>Prestation</th><th>Description</th>
+              <th class="td-right">Heures</th>
+              <th class="td-right">Tarif conseillé</th>
+              <th class="td-right">Tarif minimum</th>
+            </tr></thead>
+            <tbody id="table-dev"></tbody>
+          </table>
+        </div>
+
+        <div class="section-title">Événementiel</div>
+        <div class="tbl-wrap" style="margin-bottom:20px">
+          <table>
+            <thead><tr>
+              <th>Prestation</th><th>Description</th>
+              <th class="td-right">Tarif conseillé</th>
+              <th class="td-right">Tarif minimum</th>
+            </tr></thead>
+            <tbody id="table-event"></tbody>
+          </table>
+        </div>
+
+        <div class="alert alert-info">
+          <i class="ti ti-info-circle"></i>
+          <div><strong>Règle d'or :</strong> Tarif minimum = coût de revient + 30%. En dessous, vous travaillez à perte. Le tarif conseillé intègre votre marge cible définie ci-dessus.</div>
+        </div>
+      </div>
+
+      <!-- ─── PAGE CONTRATS ─── -->
+      <div id="page-contrats" class="page">
+        <div class="section-title">Simulation par durée de contrat</div>
+        <div class="grid3" style="margin-bottom:24px">
+          <div class="contract-card">
+            <div class="contract-header">
+              <div class="contract-title"><i class="ti ti-calendar-month"></i> 3 mois</div>
+              <span class="chip chip-clay">Découverte</span>
+            </div>
+            <div class="contract-data" id="c3">—</div>
+            <div class="contract-footer">
+              <span class="cf-label">Remise accordée</span>
+              <span class="cf-value">0 %</span>
+            </div>
+          </div>
+          <div class="contract-card featured">
+            <div class="contract-header">
+              <div class="contract-title"><i class="ti ti-calendar"></i> 6 mois</div>
+              <span class="chip chip-featured">Recommandé</span>
+            </div>
+            <div class="contract-data" id="c6">—</div>
+            <div class="contract-footer">
+              <span class="cf-label">Remise accordée</span>
+              <span class="cf-value">5 %</span>
+            </div>
+          </div>
+          <div class="contract-card">
+            <div class="contract-header">
+              <div class="contract-title"><i class="ti ti-calendar-stats"></i> 12 mois</div>
+              <span class="chip chip-clay">Annuel</span>
+            </div>
+            <div class="contract-data" id="c12">—</div>
+            <div class="contract-footer">
+              <span class="cf-label">Remise accordée</span>
+              <span class="cf-value">10 %</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-title">Conditions de paiement recommandées</div>
+        <div class="tbl-wrap" style="margin-bottom:24px">
+          <table>
+            <thead><tr><th>Situation</th><th>Acompte</th><th>Solde</th><th>Mode conseillé</th></tr></thead>
+            <tbody>
+              <tr><td>Mission ponctuelle</td><td class="td-amt">50 %</td><td class="td-muted">50 % à la livraison</td><td><span class="chip chip-clay">Orange Money</span></td></tr>
+              <tr><td>Abonnement mensuel</td><td class="td-amt">100 %</td><td class="td-muted">Début de mois</td><td><span class="chip chip-clay">Orange Money</span></td></tr>
+              <tr><td>Contrat 3–6 mois</td><td class="td-amt">40 %</td><td class="td-muted">30% mi-parcours + 30% fin</td><td><span class="chip chip-clay">Orange Money</span></td></tr>
+              <tr><td>Contrat 12 mois</td><td class="td-amt">3 mois d'avance</td><td class="td-muted">Mensuel ensuite</td><td><span class="chip chip-clay">Virement bancaire</span></td></tr>
+              <tr><td>Site web / dev</td><td class="td-amt">50 %</td><td class="td-muted">50 % à la mise en ligne</td><td><span class="chip chip-clay">Orange Money · Virement</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="divider"></div>
+        <div class="section-title">Phase de test — 6 mois</div>
+        <div class="grid2">
+          <div class="metric green">
+            <div class="metric-label">Objectif d'épargne sur 6 mois</div>
+            <div class="metric-value" id="epargne-6m">—</div>
+            <div class="metric-sub">20% du CA minimum mensuel × 6 mois</div>
+          </div>
+          <div class="alert alert-warn" style="margin-top:0;align-self:center">
+            <i class="ti ti-alert-triangle"></i>
+            <div>Avant d'enregistrer : tenir une comptabilité rigoureuse, conserver tous les reçus Orange Money, et mettre de côté <strong>20–25%</strong> de chaque encaissement pour la future fiscalité.</div>
+          </div>
+        </div>
+        <div class="alert alert-success" style="margin-top:16px">
+          <i class="ti ti-check"></i>
+          <div><strong>Action prioritaire :</strong> Fournir un contrat à Salma cette semaine. Même informel, un document écrit signé protège les deux parties dès la phase de test.</div>
+        </div>
+      </div>
+
+      <!-- ─── PAGE SEUIL ─── -->
+      <div id="page-seuil" class="page">
+        <div class="section-title">Clients nécessaires pour être rentable</div>
+        <div class="grid3" style="margin-bottom:20px">
+          <div class="metric">
+            <div class="metric-label">Pack Starter seul</div>
+            <div class="metric-value" id="n-starter">—</div>
+            <div class="metric-sub">clients pour couvrir les charges</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Pack Essentiel seul</div>
+            <div class="metric-value" id="n-essentiel">—</div>
+            <div class="metric-sub">clients pour couvrir les charges</div>
+          </div>
+          <div class="metric blue">
+            <div class="metric-label">Mix Retainer + Dev</div>
+            <div class="metric-value" id="n-mix">—</div>
+            <div class="metric-sub">clients pour couvrir les charges</div>
+          </div>
+        </div>
+
+        <div class="section-title">Simuler mon chiffre d'affaires</div>
+        <div class="grid2" style="margin-bottom:20px">
+          <div class="card">
+            <div class="card-title"><i class="ti ti-adjustments"></i> Paramètres</div>
+            <div class="slider-row">
+              <div class="slider-top"><label>Abonnés communication</label><span class="slider-val" id="v-nb-kom"></span></div>
+              <input type="range" id="nb-kom" min="0" max="10" step="1" value="2" oninput="update()">
+            </div>
+            <div class="slider-row">
+              <div class="slider-top"><label>Missions web ponctuelles</label><span class="slider-val" id="v-nb-dev"></span></div>
+              <input type="range" id="nb-dev" min="0" max="5" step="1" value="1" oninput="update()">
+            </div>
+            <div class="slider-row">
+              <div class="slider-top"><label>Clients retainer complet</label><span class="slider-val" id="v-nb-ret"></span></div>
+              <input type="range" id="nb-ret" min="0" max="5" step="1" value="0" oninput="update()">
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <div class="metric">
+              <div class="metric-label">CA mensuel simulé</div>
+              <div class="metric-value" id="ca-simule">—</div>
+              <div class="metric-sub" id="ca-simule-usd">—</div>
+            </div>
+            <div class="metric" id="metric-net">
+              <div class="metric-label">Résultat net estimé</div>
+              <div class="metric-value" id="resultat-net">—</div>
+              <div class="metric-sub" id="resultat-status">—</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="chart-wrap" style="margin-bottom:16px">
+          <div class="chart-legend">
+            <div class="legend-item"><div class="legend-dot" style="background:#009A44"></div> CA estimé</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#D4956A;border:1px dashed #D4956A"></div> Charges totales</div>
+          </div>
+          <div style="position:relative;height:240px">
+            <canvas id="rentaChart" role="img" aria-label="Seuil de rentabilité mensuel en fonction du nombre de clients">Seuil de rentabilité</canvas>
+          </div>
+        </div>
+
+        <div class="alert alert-warn">
+          <i class="ti ti-bulb"></i>
+          <div><strong>Phase test :</strong> L'objectif des 6 premiers mois n'est pas la rentabilité maximale, mais la validation du marché, la constitution d'un portfolio et la mise de côté de l'épargne. Visez 2–3 clients récurrents avant de scaler.</div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </main>
+
+</div><!-- /layout -->
+
+<!-- Mobile Nav -->
+<nav class="mobile-nav">
+  <button class="mob-btn active" onclick="showTab('charges',this)"><i class="ti ti-calculator"></i>Charges</button>
+  <button class="mob-btn" onclick="showTab('tarifs',this)"><i class="ti ti-tag"></i>Tarifs</button>
+  <button class="mob-btn" onclick="showTab('contrats',this)"><i class="ti ti-file-invoice"></i>Contrats</button>
+  <button class="mob-btn" onclick="showTab('seuil',this)"><i class="ti ti-chart-line"></i>Seuil</button>
+</nav>
+
+<script>
+const USD = 8600;
+const tabMeta = {
+  charges:  { title:'Charges mensuelles',    icon:'ti-calculator' },
+  tarifs:   { title:'Grille tarifaire',       icon:'ti-tag' },
+  contrats: { title:'Contrats & paiements',  icon:'ti-file-invoice' },
+  seuil:    { title:'Seuil de rentabilité',  icon:'ti-chart-line' }
+};
+
+function fmt(n){ return Math.round(n).toLocaleString('fr-FR')+' GNF' }
+function fmtU(n){ return '≈ '+(n/USD).toFixed(0)+' $' }
+function fmtM(n){ return (n/1000000).toFixed(2)+'M' }
+function g(id){ return document.getElementById(id) }
+function val(id){ return parseInt(g(id).value) }
+function saveData(){
+
+const inputs = document.querySelectorAll('input');
+
+const data = {};
+
+inputs.forEach(input=>{
+  data[input.id] = input.value;
+});
+
+localStorage.setItem(
+  'agence-dashboard',
+  JSON.stringify(data)
+);
+}
+function loadData(){
+
+const saved = localStorage.getItem('agence-dashboard');
+
+if(!saved) return;
+
+const data = JSON.parse(saved);
+
+Object.entries(data).forEach(([id,value])=>{
+
+  const el = g(id);
+
+  if(el){
+    el.value = value;
+  }
+
+});
+
+}
+
+let chargesChart=null, rentaChart=null, _totalAll=0, _essTarif=0, _devTarif=0, _retBase=0;
+
+function showTab(name, el){
+  document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.mob-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  g('page-'+name).classList.add('active');
+  if(el){ el.classList.add('active'); }
+  const m = tabMeta[name];
+  g('topbar-title').textContent = m.title;
+  g('topbar-icon').className = 'ti '+m.icon;
+  update();}
+
+function sliderFill(el){
+  const pct = (el.value - el.min) / (el.max - el.min) * 100;
+  el.style.background = `linear-gradient(to right, var(--clay-800) ${pct}%, var(--mist) ${pct}%)`;
+}
+document.querySelectorAll('input[type=range]').forEach(r=>{
+  sliderFill(r);
+  r.addEventListener('input',()=>sliderFill(r));
+});
+
+function update(){
+  const kdWifi=val('kd-wifi'),kdTr=val('kd-transport'),kdFood=val('kd-food'),
+        kdCanva=val('kd-canva'),kdStor=val('kd-storage'),kdMisc=val('kd-misc');
+  const totalKD=kdWifi+kdTr+kdFood+kdCanva+kdStor+kdMisc;
+
+  const ibWifi=val('ib-wifi'),ibApps=val('ib-apps'),ibTr=val('ib-transport'),ibMisc=val('ib-misc');
+  const totalIB=ibWifi+ibApps+ibTr+ibMisc;
+
+  const stSal=val('st-salary'),stWifi=val('st-wifi'),stTr=val('st-transport'),stFood=val('st-food');
+  const totalST=stSal+stWifi+stTr+stFood;
+
+  const agMat=val('ag-materiel'),agBur=val('ag-bureau'),agMisc=val('ag-misc');
+  const totalAG=agMat+agBur+agMisc;
+
+  const totalAll=totalKD+totalIB+totalST+totalAG;
+  _totalAll=totalAll;
+  const totalVar=kdTr+kdFood+ibTr+stTr+stFood;
+  const totalFix=totalAll-totalVar;
+  const caMin=Math.round(totalAll*1.15);
+  saveData();
+  const sv={
+    'v-kd-wifi':kdWifi,'v-kd-transport':kdTr,'v-kd-food':kdFood,
+    'v-kd-canva':kdCanva,'v-kd-storage':kdStor,'v-kd-misc':kdMisc,
+    'v-ib-wifi':ibWifi,'v-ib-apps':ibApps,'v-ib-transport':ibTr,'v-ib-misc':ibMisc,
+    'v-st-salary':stSal,'v-st-wifi':stWifi,'v-st-transport':stTr,'v-st-food':stFood,
+    'v-ag-materiel':agMat,'v-ag-bureau':agBur,'v-ag-misc':agMisc
+  };
+  for(const[k,v]of Object.entries(sv)){if(g(k))g(k).textContent=fmt(v);}
+
+  g('total-kd').textContent=fmt(totalKD);
+  g('total-ib').textContent=fmt(totalIB);
+  g('total-st').textContent=fmt(totalST);
+  g('total-all').textContent=fmt(totalAll);
+  g('total-all-usd').textContent=fmtU(totalAll);
+  g('total-var').textContent=fmt(totalVar);
+  g('total-fix').textContent=fmt(totalFix);
+  g('ca-min').textContent=fmt(caMin);
+  g('topbar-total').textContent=fmt(totalAll)+' / mois';
+
+  // Breakdown bars
+  const items=[
+    {label:'Kadiatou',val:totalKD,total:totalAll,color:'var(--clay-800)'},
+    {label:'Ibrahima', val:totalIB,total:totalAll,color:'var(--clay-600)'},
+    {label:'Stagiaire',val:totalST,total:totalAll,color:'var(--clay-400)'},
+    {label:'Agence',   val:totalAG,total:totalAll,color:'var(--clay-200)'},
+  ];
+  const bb=g('charges-breakdown');
+  if(bb){
+    bb.innerHTML=items.map(it=>{
+      const pct=totalAll>0?Math.round(it.val/it.total*100):0;
+      return `<div class="prog-row">
+        <span class="prog-label">${it.label}</span>
+        <div class="prog-bar"><div class="prog-fill" style="width:${pct}%;background:${it.color}"></div></div>
+        <span class="prog-val">${fmt(it.val)}</span>
+      </div>`;
+    }).join('');
+  }
+
+  // Doughnut chart
+  if(chargesChart){chargesChart.destroy();}
+  const cCtx=g('chargesChart');
+  if(cCtx){
+    chargesChart=new Chart(cCtx,{
+      type:'doughnut',
+      data:{
+        labels:['Kadiatou','Ibrahima','Stagiaire','Agence fixe'],
+        datasets:[{
+          data:[totalKD,totalIB,totalST,totalAG],
+          backgroundColor:['#5C2E0E','#9B5230','#D4956A','#EDD4BB'],
+          borderWidth:0,hoverOffset:4
+        }]
+      },
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        cutout:'68%',
+        plugins:{
+          legend:{display:false},
+          tooltip:{callbacks:{label:ctx=>' '+fmt(ctx.raw)+' ('+Math.round(ctx.raw/totalAll*100)+'%)'}}
+        }
+      }
+    });
+  }
+
+  // TARIFS
+  const margin=val('margin')/100;
+  const hourly=Math.round(totalAll/80);
+  const hTarif=Math.round(hourly*(1+margin));
+  g('v-margin').textContent=val('margin')+'%';
+  g('hourly-cost').textContent=fmt(hourly)+'/h';
+  if(g('hourly-billed'))g('hourly-billed').textContent=fmt(hTarif)+'/h';
+
+  const komPacks=[
+    ['Pack Starter',    '8 visuels + 2 vidéos / mois',    Math.round(totalKD*0.3)],
+    ['Pack Essentiel',  '15 visuels + 4 vidéos + 1 réseau',Math.round(totalKD*0.6)],
+    ['Pack Premium',    '20 visuels + 6 vidéos + 2 réseaux',Math.round(totalKD*0.9)],
+    ['Stratégie seule', 'Document stratégique + présentation',Math.round(hourly*8)],
+    ['Identité visuelle','Logo + charte graphique complète',Math.round(hourly*12)],
+  ];
+  const tk=g('table-kom');
+  if(tk)tk.innerHTML=komPacks.map(([n,d,cost])=>{
+    const tarif=Math.round(cost*(1+margin)/50000)*50000;
+    const tmin=Math.round(cost*1.3/50000)*50000;
+    return `<tr><td><strong>${n}</strong></td><td class="td-muted">${d}</td>
+    <td class="td-min">${fmt(cost)}</td>
+    <td class="td-amt">${fmt(tarif)}</td>
+    <td class="td-min">${fmt(tmin)}</td></tr>`;
+  }).join('');
+
+  const devPacks=[
+    ['Site vitrine simple',   '5 pages · mobile · WhatsApp',   20],
+    ['Site vitrine avancé',   '10+ pages · blog · galerie',     35],
+    ['Site e-commerce',       'Boutique + Orange Money',         60],
+    ['Maintenance mensuelle', 'MàJ · sauvegardes · support',     5],
+    ['Appli web sur mesure',  'Selon cahier des charges',        80],
+  ];
+  const td=g('table-dev');
+  if(td)td.innerHTML=devPacks.map(([n,d,h])=>{
+    const cost=hourly*h;
+    const tarif=Math.round(cost*(1+margin)/100000)*100000;
+    const tmin=Math.round(cost*1.3/100000)*100000;
+    return `<tr><td><strong>${n}</strong></td><td class="td-muted">${d}</td>
+    <td class="td-h">${h}h</td>
+    <td class="td-amt">${n.includes('Appli')?'Sur devis':fmt(tarif)}</td>
+    <td class="td-min">${n.includes('Appli')?'—':fmt(tmin)}</td></tr>`;
+  }).join('');
+
+  const eventPacks=[
+    ['Couverture photo','Photos retouchées livrées en 48h', hourly*6],
+    ['Couverture vidéo','Teaser 2–3min + clips courts',      hourly*10],
+    ['Pack complet événement','Photo + vidéo + réseaux',    hourly*14],
+    ['Reportage institutionnel','ONG · conférences · inaugurations', hourly*12],
+  ];
+  const te=g('table-event');
+  if(te)te.innerHTML=eventPacks.map(([n,d,cost])=>{
+    const tarif=Math.round(cost*(1+margin)/50000)*50000;
+    const tmin=Math.round(cost*1.3/50000)*50000;
+    return `<tr><td><strong>${n}</strong></td><td class="td-muted">${d}</td>
+    <td class="td-amt">${fmt(tarif)}</td>
+    <td class="td-min">${fmt(tmin)}</td></tr>`;
+  }).join('');
+
+  // CONTRATS
+  const essTarif=Math.round(komPacks[1][2]*(1+margin)/50000)*50000;
+  const retBase=Math.round(totalAll*0.7*(1+margin)/50000)*50000;
+  _essTarif=essTarif; _retBase=retBase;
+  const devTarif=Math.round(hourly*20*(1+margin)/100000)*100000;
+  _devTarif=devTarif;
+
+  function cHTML(dur,disc){
+    const km=Math.round(essTarif*(1-disc)/10000)*10000;
+    const rt=Math.round(retBase*(1-disc)/10000)*10000;
+    return `<div>Pack Essentiel : <strong>${fmt(km)}</strong>/mois</div>
+            <div>Total ${dur} mois (com) : <strong>${fmt(km*dur)}</strong></div>
+            <div style="margin-top:6px">Retainer complet : <strong>${fmt(rt)}</strong>/mois</div>
+            <div>Total ${dur} mois (retainer) : <strong>${fmt(rt*dur)}</strong></div>`;
+  }
+  if(g('c3'))g('c3').innerHTML=cHTML(3,0);
+  if(g('c6'))g('c6').innerHTML=cHTML(6,.05);
+  if(g('c12'))g('c12').innerHTML=cHTML(12,.10);
+  if(g('epargne-6m'))g('epargne-6m').textContent=fmt(Math.round(caMin*.20*6));
+
+  // SEUIL
+  const starterTarif=Math.round(komPacks[0][2]*(1+margin)/50000)*50000;
+  if(g('n-starter'))g('n-starter').textContent=Math.ceil(caMin/starterTarif)+'';
+  if(g('n-essentiel'))g('n-essentiel').textContent=Math.ceil(caMin/essTarif)+'';
+  if(g('n-mix'))g('n-mix').textContent='2 – 3';
+
+  if(g('v-nb-kom'))g('v-nb-kom').textContent=val('nb-kom');
+  if(g('v-nb-dev'))g('v-nb-dev').textContent=val('nb-dev');
+  if(g('v-nb-ret'))g('v-nb-ret').textContent=val('nb-ret');
+
+  const caSimule=val('nb-kom')*essTarif+val('nb-dev')*devTarif+val('nb-ret')*retBase;
+  const netRes=caSimule-totalAll;
+  if(g('ca-simule'))g('ca-simule').textContent=fmt(caSimule);
+  if(g('ca-simule-usd'))g('ca-simule-usd').textContent=fmtU(caSimule);
+  if(g('resultat-net'))g('resultat-net').textContent=(netRes>=0?'+':'')+fmt(netRes);
+  if(g('resultat-status'))g('resultat-status').textContent=netRes>=0?'Bénéfice estimé':'Déficit — augmenter le nb. de clients';
+  const mn=g('metric-net');
+  if(mn){mn.style.borderLeftColor=netRes>=0?'var(--green)':'var(--red)';}
+
+  // Rentabilité chart
+  if(rentaChart){rentaChart.destroy();}
+  const rCtx=g('rentaChart');
+  if(rCtx){
+    const steps=[0,1,2,3,4,5,6,7,8,9,10];
+    const caLine=steps.map(n=>n*essTarif+Math.min(n,3)*devTarif/3);
+    const chLine=steps.map(()=>totalAll);
+    rentaChart=new Chart(rCtx,{
+      type:'line',
+      data:{
+        labels:steps.map(n=>n===0?'0':n+(n>1?' clients':' client')),
+        datasets:[
+          {label:'CA estimé',data:caLine,borderColor:'#009A44',backgroundColor:'rgba(0,154,68,.08)',fill:true,tension:.4,borderWidth:2,pointRadius:3,pointBackgroundColor:'#009A44'},
+          {label:'Charges',data:chLine,borderColor:'#D4956A',borderDash:[5,4],fill:false,tension:0,borderWidth:2,pointRadius:0}
+        ]
+      },
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false,callbacks:{label:ctx=>ctx.dataset.label+' : '+fmt(ctx.raw)}}},
+        scales:{
+          y:{ticks:{callback:v=>fmtM(v)+' GNF',font:{size:11},color:'#7C6055'},grid:{color:'rgba(0,0,0,.04)'},border:{display:false}},
+          x:{ticks:{font:{size:11},color:'#7C6055'},grid:{display:false},border:{display:false}}
+        }
+      }
+    });
+  }
+}
+loadData();
+update();
+
+</script>
+</body>
+</html>
