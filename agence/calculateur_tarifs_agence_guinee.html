@@ -405,6 +405,92 @@ tbody tr:hover td{background:var(--clay-50)}
 .recovery-header strong{font-family:var(--mono);font-size:12px;color:var(--clay-700)}
 .recovery-track{height:6px;background:var(--clay-100);border-radius:99px;overflow:hidden}
 .recovery-fill{height:100%;border-radius:99px;background:linear-gradient(to right,var(--clay-500),var(--clay-400));transition:width .5s cubic-bezier(.16,1,.3,1)}
+
+/* ── MATERIALS LIST ── */
+.mat-section-label{
+  font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--clay-500);font-weight:600;margin-bottom:8px;
+  display:flex;align-items:center;gap:6px;
+}
+.mat-section-label::after{content:'';flex:1;height:1px;background:var(--clay-100)}
+.mat-suggestions{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.mat-chip{
+  border:1px solid var(--clay-200);color:var(--clay-700);background:#fff;
+  border-radius:99px;padding:5px 12px;font-size:11px;font-weight:600;cursor:pointer;
+  transition:all .18s;display:flex;align-items:center;gap:5px;font-family:var(--font);
+}
+.mat-chip i{font-size:13px;color:var(--clay-500)}
+.mat-chip:hover{background:var(--clay-100);color:var(--clay-800);border-color:var(--clay-400)}
+.mat-list{
+  background:#fff;border:1px solid var(--clay-200);
+  border-radius:var(--r-md);overflow:hidden;margin-bottom:10px;
+  min-height:48px;
+}
+.mat-list-empty{
+  padding:20px;text-align:center;font-size:13px;color:var(--clay-400);
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.mat-list-empty i{font-size:18px}
+.mat-row{
+  display:grid;grid-template-columns:32px 1fr auto auto;
+  align-items:center;gap:10px;
+  padding:9px 12px;border-bottom:1px solid var(--clay-100);
+  transition:background .15s;
+}
+.mat-row:last-child{border-bottom:none}
+.mat-row:hover{background:var(--clay-50)}
+.mat-cat-btn{
+  width:28px;height:28px;border-radius:8px;background:var(--clay-100);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  border:none;transition:background .15s;flex-shrink:0;
+}
+.mat-cat-btn:hover{background:var(--clay-200)}
+.mat-cat-btn i{font-size:14px;color:var(--clay-600)}
+.mat-name-input{
+  border:none;outline:none;background:transparent;
+  font-family:var(--font);font-size:13px;color:var(--ink);width:100%;
+}
+.mat-name-input::placeholder{color:var(--clay-400)}
+.mat-amount-wrap{
+  display:flex;align-items:center;gap:4px;
+  background:var(--clay-50);border:1px solid var(--clay-200);
+  border-radius:8px;padding:5px 10px;
+}
+.mat-amount-wrap:focus-within{border-color:var(--clay-500);background:#fff}
+.mat-amount-input{
+  width:100px;border:none;outline:none;background:transparent;
+  font-family:var(--mono);font-size:13px;font-weight:600;
+  color:var(--clay-900);text-align:right;
+}
+.mat-amount-input::placeholder{color:var(--clay-300,#d8bfaa)}
+.mat-unit{font-family:var(--mono);font-size:10px;color:var(--clay-500);font-weight:500}
+.mat-del-btn{
+  border:none;background:transparent;cursor:pointer;
+  width:26px;height:26px;border-radius:6px;padding:0;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--clay-300,#d8bfaa);transition:background .15s,color .15s;
+}
+.mat-del-btn:hover{background:rgba(196,112,96,.1);color:var(--red)}
+.mat-del-btn i{font-size:14px}
+.mat-add-btn{
+  width:100%;border:1.5px dashed var(--clay-200);background:transparent;
+  border-radius:var(--r-md);padding:10px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  font-family:var(--font);font-size:12px;font-weight:600;color:var(--clay-600);
+  transition:all .18s;margin-bottom:16px;
+}
+.mat-add-btn:hover{background:var(--clay-50);border-color:var(--clay-400);color:var(--clay-800)}
+.mat-add-btn i{font-size:15px}
+.mat-total-bar{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:11px 14px;background:var(--clay-100);border-radius:var(--r-md);
+  border:1px solid var(--clay-200);margin-bottom:16px;
+}
+.mat-total-lhs{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--clay-800)}
+.mat-total-lhs i{font-size:16px;color:var(--clay-600)}
+.mat-total-rhs{display:flex;align-items:baseline;gap:8px}
+.mat-total-gnf{font-family:var(--mono);font-size:16px;font-weight:700;color:var(--clay-900)}
+.mat-total-usd{font-family:var(--mono);font-size:11px;color:var(--clay-500)}
 </style>
 </style>
 </head>
@@ -463,18 +549,42 @@ tbody tr:hover td{background:var(--clay-50)}
       <!-- ─── PAGE CHARGES ─── -->
       <div id="page-charges" class="page active">
 
-        <!-- INVESTMENT CARD -->
+        <!-- INVESTMENT CARD — Matériel & Équipements -->
         <div class="invest-card">
           <div class="invest-card-header">
-            <div class="invest-title"><i class="ti ti-cash"></i> Investissement initial de démarrage</div>
+            <div class="invest-title"><i class="ti ti-package"></i> Investissement initial — Matériel &amp; Équipements</div>
             <span class="invest-badge">Amorti sur la durée choisie</span>
           </div>
-          <div class="invest-input-group">
-            <div class="invest-currency"><i class="ti ti-currency-franc" style="font-size:15px;margin-right:6px"></i> GNF</div>
-            <input class="invest-input" type="number" id="invest-amount" min="0" step="50000" value="0"
-              placeholder="0" oninput="update()" aria-label="Montant investissement initial en GNF">
+          <!-- Suggestions rapides -->
+          <div class="mat-section-label"><i class="ti ti-bolt"></i> Ajout rapide</div>
+          <div class="mat-suggestions">
+            <button class="mat-chip" onclick="quickAdd('Appareil photo / vidéo','ti-camera',1500000)"><i class="ti ti-camera"></i>Appareil photo/vidéo</button>
+            <button class="mat-chip" onclick="quickAdd('Ordinateur portable','ti-device-laptop',2000000)"><i class="ti ti-device-laptop"></i>Ordinateur portable</button>
+            <button class="mat-chip" onclick="quickAdd('Micro &amp; son','ti-microphone',500000)"><i class="ti ti-microphone"></i>Micro &amp; son</button>
+            <button class="mat-chip" onclick="quickAdd('Kit éclairage studio','ti-lamp',300000)"><i class="ti ti-lamp"></i>Éclairage studio</button>
+            <button class="mat-chip" onclick="quickAdd('Téléphone stagiaire','ti-device-mobile',200000)"><i class="ti ti-device-mobile"></i>Téléphone stagiaire</button>
+            <button class="mat-chip" onclick="quickAdd('Mobilier bureau','ti-armchair',400000)"><i class="ti ti-armchair"></i>Mobilier bureau</button>
+            <button class="mat-chip" onclick="quickAdd('Disque dur externe','ti-device-floppy',150000)"><i class="ti ti-device-floppy"></i>Disque dur</button>
+            <button class="mat-chip" onclick="quickAdd('Trépied / stabilisateur','ti-align-center',180000)"><i class="ti ti-align-center"></i>Trépied</button>
+            <button class="mat-chip" onclick="quickAdd('Imprimante','ti-printer',250000)"><i class="ti ti-printer"></i>Imprimante</button>
+            <button class="mat-chip" onclick="quickAdd('Fond photo / studio','ti-wall',120000)"><i class="ti ti-wall"></i>Fond photo</button>
           </div>
-          
+          <!-- Liste des postes -->
+          <div class="mat-section-label" style="margin-top:4px"><i class="ti ti-list"></i> Détail des postes</div>
+          <div class="mat-list" id="mat-list">
+            <div class="mat-list-empty" id="mat-empty"><i class="ti ti-plus-circle"></i> Cliquez sur un ajout rapide ou ajoutez un poste personnalisé</div>
+          </div>
+          <button class="mat-add-btn" onclick="addMatRow()">
+            <i class="ti ti-plus"></i> Ajouter un poste personnalisé
+          </button>
+          <!-- Total -->
+          <div class="mat-total-bar">
+            <div class="mat-total-lhs"><i class="ti ti-calculator"></i> Total investissement</div>
+            <div class="mat-total-rhs">
+              <span class="mat-total-gnf" id="mat-total-gnf">0 GNF</span>
+              <span class="mat-total-usd" id="mat-total-usd">≈ 0 $</span>
+            </div>
+          </div>
           <div class="amort-row">
             <span class="amort-label">Amortir sur :</span>
             <div class="amort-pills">
@@ -912,15 +1022,72 @@ function val(id){ return parseInt(g(id).value)||0 }
 
 let chargesChart=null, rentaChart=null;
 let _amortMonths = 12;
+let _matId = 0;
+let materials = [];   // [{id, name, icon, amount}]
 
-/* ── Invest chip: ajoute le montant dans l'input ── */
-function addInvest(btn){
-  const add = parseInt(btn.dataset.amount)||0;
-  const inp = g('invest-amount');
-  inp.value = (parseInt(inp.value)||0) + add;
-  btn.classList.toggle('sel');
+/* ── Render materials list ── */
+function renderMats(){
+  const list = g('mat-list');
+  if(!list) return;
+  if(materials.length === 0){
+    list.innerHTML = `<div class="mat-list-empty"><i class="ti ti-plus-circle"></i> Cliquez sur un ajout rapide ou ajoutez un poste personnalisé</div>`;
+    return;
+  }
+  list.innerHTML = materials.map(m=>`
+    <div class="mat-row" data-mid="${m.id}">
+      <div class="mat-cat-btn"><i class="ti ${m.icon}"></i></div>
+      <input class="mat-name-input" value="${escH(m.name)}" placeholder="Nom du matériel"
+        onchange="setMatName(${m.id},this.value)">
+      <div class="mat-amount-wrap">
+        <input class="mat-amount-input" type="number" value="${m.amount||''}" placeholder="0" min="0" step="10000"
+          oninput="setMatAmt(${m.id},this.value)">
+        <span class="mat-unit">GNF</span>
+      </div>
+      <button class="mat-del-btn" onclick="delMat(${m.id})" title="Supprimer"><i class="ti ti-trash"></i></button>
+    </div>`).join('');
+  updateMatTotal();
+}
+
+function escH(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;'); }
+
+function updateMatTotal(){
+  const total = materials.reduce((s,m)=>s+(m.amount||0),0);
+  if(g('mat-total-gnf')) g('mat-total-gnf').textContent = fmt(total);
+  if(g('mat-total-usd')) g('mat-total-usd').textContent = fmtU(total);
+}
+
+/* ── Quick-add from chip ── */
+function quickAdd(name, icon, amount){
+  _matId++;
+  materials.push({id:_matId, name, icon, amount});
+  renderMats();
   update();
 }
+
+/* ── Add blank row ── */
+function addMatRow(){
+  _matId++;
+  materials.push({id:_matId, name:'', icon:'ti-package', amount:0});
+  renderMats();
+  update();
+  // focus the new name field
+  setTimeout(()=>{
+    const rows = document.querySelectorAll('.mat-row');
+    const last = rows[rows.length-1];
+    if(last) last.querySelector('.mat-name-input').focus();
+  },40);
+}
+
+/* ── Delete row ── */
+function delMat(id){
+  materials = materials.filter(m=>m.id!==id);
+  renderMats();
+  update();
+}
+
+/* ── Edit handlers ── */
+function setMatName(id,v){ const m=materials.find(x=>x.id===id); if(m) m.name=v; updateMatTotal(); }
+function setMatAmt(id,v){ const m=materials.find(x=>x.id===id); if(m){ m.amount=parseInt(v)||0; updateMatTotal(); update(); } }
 
 /* ── Amort pill selector ── */
 function setAmort(btn){
@@ -971,8 +1138,8 @@ function update(){
   const totalFix=totalAll-totalVar;
   const caMin=Math.round(totalAll*1.15);
 
-  /* ── INVESTISSEMENT ── */
-  const investAmt  = parseInt(g('invest-amount').value)||0;
+  /* ── INVESTISSEMENT ── (somme des postes matériel) ── */
+  const investAmt  = materials.reduce((s,m)=>s+(m.amount||0),0);
   const amortMens  = investAmt > 0 ? Math.round(investAmt/_amortMonths) : 0;
   const caMinInvest= caMin + amortMens;
   const hasInvest  = investAmt > 0;
@@ -1012,11 +1179,11 @@ function update(){
 
   /* ── DOUGHNUT CHART ── */
   const chargesData=[
-    {label:'Kadiatou',v:totalKD,c:'#5C2E0E'},
-    {label:'Ibrahima', v:totalIB,c:'#9B5230'},
-    {label:'Stagiaire',v:totalST,c:'#D4956A'},
-    {label:'Agence fixe',v:totalAG,c:'#EDD4BB'},
-    ...(hasInvest?[{label:'Invest. (amorti)',v:amortMens,c:'#1D6FA4'}]:[])
+    {label:'Kadiatou',v:totalKD,c:'#7A5742'},
+    {label:'Ibrahima', v:totalIB,c:'#B38A6E'},
+    {label:'Stagiaire',v:totalST,c:'#DFC0A0'},
+    {label:'Agence fixe',v:totalAG,c:'#EDD8C4'},
+    ...(hasInvest?[{label:'Invest. (amorti)',v:amortMens,c:'#7AAEC8'}]:[])
   ];
   if(chargesChart){chargesChart.destroy();}
   const cCtx=g('chargesChart');
